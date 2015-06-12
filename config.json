@@ -1,0 +1,23 @@
+{
+  "steamworks_sdk_path": "PATH_TO_STEAMWORKS_SDK",
+  "steamworks_username": "YOUR_USERNAME",
+  "steamworks_password": "YOUR_PASSWORD",
+  "steamworks_appid": -1,
+
+  "relative_buildoutput_dir": "output",
+  "relative_contentroot_dir": "content",
+  "steamcmd_executable": "builder/steamcmd.exe",
+  "autobuild_vdf_file": "scripts/bot.vdf",
+
+  "project_root": "PATH_TO_PROJECT_ROOT",
+
+  "builds": [
+    {
+      "name": "MyBuild",
+      "depot_id": "-1001",
+      "vdf_filename": "My_Build.vdf",
+      "relative_build_dir": "/bin/Release",
+      "exclude_pattern": ".*.pdb"
+    }
+  ]
+}
