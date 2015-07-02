@@ -26,7 +26,6 @@ function copy_project_files(description, steam_branch, builds, instance, callbac
   var output_path = path.join(config.steamworks_sdk_path, config.relative_contentroot_dir, build.name);
 
   var self = this;
-  console.log(output_path + ", " + build_path);
   if(fs.existsSync(output_path)) {
     wrench.rmdirRecursive(output_path, false, function(err){
       if(err)
