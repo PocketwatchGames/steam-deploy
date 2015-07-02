@@ -83,3 +83,6 @@ Steam-Deploy emits three events for scripting purposes:
 * `success` - Indicates the deployment was successfully recieved by the Steam backend.
 * `failure` - Indicates something went wrong, calls back with an error message from steamcmd.exe.
 * `message` - Provides progress messages.
+
+## Contributing
+Feel free to send me an e-mail at `aferbrache@pocketwatchgames.com` or report issues via GitHub if you find any problems and I'll try to fix them. Pull requests are also cool :)
