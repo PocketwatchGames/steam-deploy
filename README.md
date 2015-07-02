@@ -10,9 +10,9 @@ In addition to your own copy of the Steamworks SDK (not provided), Steam-Deploy 
 git clone https://github.com/pocketwatchgames/steam-deploy.git
 ```
 
-Install dependencies with
+Or via NPM
 ```
-npm install
+npm install --save steam-deploy
 ```
 
 ### Configuration
