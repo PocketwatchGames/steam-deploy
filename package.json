@@ -5,7 +5,7 @@
   "main": "steampipe",
   "author": {
     "name": "Alex Ferbrache",
-    "email": "aferbrache@pocketwatchgames.com",
+    "email": "aferbrache@pocketwatchgames.com"
   },
   "license": "MIT",
   "dependencies": {

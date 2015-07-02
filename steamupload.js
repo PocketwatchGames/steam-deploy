@@ -11,4 +11,5 @@ program
 var description = program.desc ? program.desc : "Uploaded with steampipe.js";
 var branch = program.branch ? program.branch : "";
 
-steampipe.deploy(description, branch);
+var steam = new steampipe();
+steam.deploy(description, branch);

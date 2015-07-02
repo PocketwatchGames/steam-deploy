@@ -4,42 +4,81 @@ var wrench = require('wrench');
 var exec = require('child_process').exec;
 var config = require('./config.json');
 var EventEmitter = require("events").EventEmitter;
+var util = require('util');
 var program = require("commander");
 
-var steampipe = new EventEmitter();
-module.exports = steampipe;
+function Steampipe() {
+    EventEmitter.call(this);
+}
 
-steampipe.deploy = function(description, steam_branch) {
+util.inherits(Steampipe, EventEmitter);
+
+Steampipe.prototype.deploy = function(description, steam_branch) {
   console.log("Getting Ready...");
-  copy_project_files();
+  this.emit("message", "Copying build files");
+  copy_project_files(description, steam_branch, config.builds.slice(), this, post_file_copy);
+};
+
+function copy_project_files(description, steam_branch, builds, instance, callback) {
+  console.log("Copying project files for " + builds.length + " projects");
+  var build = builds.pop();
+  var build_path = path.join(config.project_root, build.relative_build_dir);
+  var output_path = path.join(config.steamworks_sdk_path, config.relative_contentroot_dir, build.name);
+
+  var self = this;
+  console.log(output_path + ", " + build_path);
+  if(fs.existsSync(output_path)) {
+    wrench.rmdirRecursive(output_path, false, function(err){
+      if(err)
+        console.log(err);
+
+      wrench.mkdirSyncRecursive(output_path);
+
+      wrench.copyDirRecursive(build_path, output_path, {
+        forceDelete: true,
+        exclude: new RegExp(build.exclude_pattern)
+      }, function(err) {
+        if(err)
+          console.log(err);
+
+        if(!builds.length)
+          callback(description, steam_branch, instance);
+        else
+          copy_project_files(description, steam_branch, builds, instance, callback);
+      });
+    });
+  } else {
+    wrench.mkdirSyncRecursive(output_path);
+
+    wrench.copyDirRecursive(build_path, output_path, {
+      forceDelete: true,
+      exclude: new RegExp(build.exclude_pattern)
+    }, function(err) {
+      if(err)
+        console.log(err);
+
+      if(!builds.length)
+        callback(description, steam_branch, instance);
+      else
+        copy_project_files(description, steam_branch, builds, instance, callback);
+    });
+  }
+}
+
+function post_file_copy(description, steam_branch, instance) {
   create_appbuild(description, steam_branch);
   var cmd = get_steamworks_command();
   console.log("Uploading to Steamworks");
+  instance.emit('message', "Beginning Steamworks upload");
   exec(cmd, {maxBuffer: 1024 * 1024}, function (err, stdout, stderr) {
     if(err) {
       console.log("OUT:\n" + stdout + " ERR: " + err);
-      steampipe.emit("failure", stdout, stderr);
+      instance.emit("failure", stdout, stderr);
     } else {
       console.log("DONE!");
-      steampipe.emit("success");
+      instance.emit("success");
     }
   });
-};
-
-function copy_project_files() {
-  console.log("Copying project files");
-  for(var item in config.builds) {
-    var build = config.builds[item];
-    var build_path = path.join(config.project_root, build.relative_build_dir);
-    var output_path = path.join(config.steamworks_sdk_path, config.relative_contentroot_dir, build.name);
-    if(fs.existsSync(output_path))
-      wrench.rmdirSyncRecursive(output_path);
-    wrench.mkdirSyncRecursive(output_path);
-    wrench.copyDirSyncRecursive(build_path, output_path, {
-      forceDelete: true,
-      exclude: new RegExp(build.exclude_pattern)
-    });
-  }
 }
 
 function create_appbuild(description, steam_branch) {
@@ -112,3 +151,5 @@ function get_steamworks_command() {
 		];
 	return executable_path + ' ' + args.join(' ');
 }
+
+module.exports = Steampipe;
