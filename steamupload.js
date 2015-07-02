@@ -8,7 +8,7 @@ program
   .option('-b, --branch [branch]', 'Specify remote branch. Default is steampipejs')
   .parse(process.argv);
 
-var description = program.desc ? program.desc : "Uploaded with steampipe.js";
+var description = program.desc ? program.desc : "Uploaded with steam-deploy.js";
 var branch = program.branch ? program.branch : "";
 
 var steam = new steampipe();

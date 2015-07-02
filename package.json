@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Command line utility and module for uploading to Steam via Steam Pipe",
   "main": "steampipe",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PocketwatchGames/steam-deploy.git"
+  },
   "author": {
     "name": "Alex Ferbrache",
     "email": "aferbrache@pocketwatchgames.com"
