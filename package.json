@@ -1,8 +1,8 @@
 {
-  "name": "steampipe",
+  "name": "steam-deploy",
   "version": "1.0.0",
   "description": "Command line utility and module for uploading to Steam via Steam Pipe",
-  "main": "steampipe",
+  "main": "steam-deploy",
   "repository": {
     "type": "git",
     "url": "https://github.com/PocketwatchGames/steam-deploy.git"
