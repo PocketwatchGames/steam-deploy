@@ -24,12 +24,16 @@ function copy_project_files(description, steam_branch, builds, instance, callbac
   var build = builds.pop();
   var build_path = path.join(config.project_root, build.relative_build_dir);
   var output_path = path.join(config.steamworks_sdk_path, config.relative_contentroot_dir, build.name);
+  instance.emit("message", "Copying files for: `" + build.name + '`');
 
   var self = this;
   if(fs.existsSync(output_path)) {
     wrench.rmdirRecursive(output_path, false, function(err){
-      if(err)
+      if(err) {
         console.log(err);
+        instance.emit('failure', err.toString());
+        return;
+      }
 
       wrench.mkdirSyncRecursive(output_path);
 
@@ -41,7 +45,7 @@ function copy_project_files(description, steam_branch, builds, instance, callbac
           console.log(err);
 
         if(!builds.length)
-          callback(description, steam_branch, instance);
+          callback(description, steam_branch, instance, err);
         else
           copy_project_files(description, steam_branch, builds, instance, callback);
       });
@@ -53,18 +57,28 @@ function copy_project_files(description, steam_branch, builds, instance, callbac
       forceDelete: true,
       exclude: new RegExp(build.exclude_pattern)
     }, function(err) {
-      if(err)
+      if(err) {
         console.log(err);
+        instance.emit('failure', err.toString());
+        return;
+      }
 
       if(!builds.length)
-        callback(description, steam_branch, instance);
+        callback(description, steam_branch, instance, err);
       else
         copy_project_files(description, steam_branch, builds, instance, callback);
     });
   }
 }
 
-function post_file_copy(description, steam_branch, instance) {
+function post_file_copy(description, steam_branch, instance, error) {
+  if (error) {
+    // Something went wrong during the copy, or there was a bad filename
+    console.error('Failure occurred trying to copy build files.');
+    instance.emit('failure', stdout, stderr);
+    return;
+  }
+
   create_appbuild(description, steam_branch);
   var cmd = get_steamworks_command();
   console.log("Uploading to Steamworks");
@@ -144,11 +158,11 @@ function get_steamworks_command() {
   var vdf_filepath = path.join(config.steamworks_sdk_path, config.autobuild_vdf_file);
 
   var args = [
-			"+login", config.steamworks_username, config.steamworks_password,
-			"+run_app_build", vdf_filepath,
-			"+quit"
-		];
-	return executable_path + ' ' + args.join(' ');
+      "+login", config.steamworks_username, config.steamworks_password,
+      "+run_app_build", vdf_filepath,
+      "+quit"
+    ];
+  return executable_path + ' ' + args.join(' ');
 }
 
 module.exports = Steampipe;
