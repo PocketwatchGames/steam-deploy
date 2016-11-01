@@ -85,4 +85,4 @@ Steam-Deploy emits three events for scripting purposes:
 * `message` - Provides progress messages.
 
 ## Contributing
-Feel free to send me an e-mail at `aferbrache@pocketwatchgames.com` or report issues via GitHub if you find any problems and I'll try to fix them. Pull requests are also cool :)
+Feel free to send us an e-mail at `support@pocketwatchgames.com` or report issues via GitHub.  Original work on steam-deploy was done by Alex Ferbrache: twitter.com/AlexFerbrache
